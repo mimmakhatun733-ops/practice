@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার প্রথম লাইভ ঘড়ি</title>
+    <title>Live Digital Clock</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #1f4068, #162447, #1b1b2f);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #ffffff;
         }
-        .clock-box {
-            background: rgba(255, 255, 255, 0.1);
+
+        .clock-container {
+            background: rgba(255, 255, 255, 0.05);
             padding: 40px 60px;
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -24,41 +29,73 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             text-align: center;
         }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
+
+        .date {
+            font-size: 1.2rem;
+            color: #e4e4e4;
             letter-spacing: 2px;
-            color: #ffeb3b;
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
-        #clock {
-            font-size: 60px;
+
+        .time {
+            font-size: 4.5rem;
             font-weight: bold;
-            letter-spacing: 4px;
+            color: #00fff5;
+            text-shadow: 0 0 20px rgba(0, 255, 245, 0.5),
+                         0 0 40px rgba(0, 255, 245, 0.2);
+            letter-spacing: 3px;
+        }
+
+        .ampm {
+            font-size: 2rem;
+            color: #ff007f;
+            margin-left: 10px;
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
 
-    <div class="clock-box">
-        <h1>Live Digital Clock</h1>
-        <div id="clock">00:00:00</div>
+    <div class="clock-container">
+        <div class="date" id="dateDiv">Loading date...</div>
+        <div class="time">
+            <span id="timeDiv">00:00:00</span>
+            <span class="ampm" id="ampmDiv">AM</span>
+        </div>
     </div>
 
     <script>
         function updateClock() {
             const now = new Date();
+
+            // ১. সময় বের করা (১২ ঘণ্টার ফরম্যাটে)
             let hours = now.getHours();
             let minutes = now.getMinutes();
             let seconds = now.getSeconds();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
 
-            hours = hours < 10 ? "0" + hours : hours;
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+            hours = hours % 12;
+            hours = hours ? hours : 12; // যদি ০ হয় তবে ১২ দেখাবে
 
-            document.getElementById("clock").innerText = `${hours}:${minutes}:${seconds}`;
+            // সিঙ্গেল ডিজিটের আগে '0' যোগ করা
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            document.getElementById('timeDiv').innerText = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('ampmDiv').innerText = ampm;
+
+            // ২. তারিখ ও বার বের করা
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            document.getElementById('dateDiv').innerText = dateString;
         }
+
+        // প্রতি সেকেন্ডে ঘড়ি আপডেট করার জন্য
         setInterval(updateClock, 1000);
-        updateClock();
+        updateClock(); // পেজ লোড হওয়ার সাথে সাথে যেন সময় দেখায়
     </script>
 
 </body>
